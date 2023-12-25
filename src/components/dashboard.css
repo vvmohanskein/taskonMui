@@ -1,0 +1,30 @@
+.card-form{
+    display: flex;
+    align-items: center;
+
+}
+
+.rich-text-div{
+ width: 400px;
+ height: 100px;
+}
+.txt-field-title{
+    width: 400px;
+    height: 100px;
+}
+.upload-pic-btn{
+    text-decoration: none;
+    text-transform: none !important;
+    background-color: blue !important;
+    color: white !important;
+    padding: 0px 15px 0px 15px;
+}
+
+.upload-pic-btn-multiple{
+    text-decoration: none;
+    text-transform: none !important;
+    background-color: blue !important;
+    color: white !important;
+    padding: 0px 15px 0px 15px;
+    margin-top: 25px !important;
+}
