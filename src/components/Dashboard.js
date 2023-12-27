@@ -6,27 +6,29 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import { Button, Card, TablePagination, TextField } from "@mui/material";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import "./dashboard.css";
 import CloseOutlinedIcon from "@mui/icons-material/CloseOutlined";
 export function Dashboard() {
-const initialState = {
-  title :'',
-  bgimage :'',
-  description :''
-}
+  const initialState = {
+    title: "",
+    bgimage: "",
+    description: "",
+  };
 
-const [selectedMultipleImage,setSelectedMultipleImage]= useState([])
-const [ imageConverted,setImageConverted] = useState([])
-const [ formData,setFormData] = useState(initialState)
+const inputRef = useRef();
+
+  const [selectedMultipleImage, setSelectedMultipleImage] = useState([]);
+  const [imageConverted, setImageConverted] = useState([]);
+  const [formData, setFormData] = useState(initialState);
   const [page, setPage] = useState(0);
   const [value, setValue] = useState("");
   const [rowsPerPage, setRowsPerPage] = useState(5);
-const [pictureDisplay,setPictureDisplay] = useState(null)
-const [pictureData,setPictureData] = useState(null)
-
+  const [pictureDisplay, setPictureDisplay] = useState(null);
+  const [pictureData, setPictureData] = useState(null);
+  const [filesDandD, setFilesDandD] = useState(null);
   const modules = {
     toolbar: [
       [{ header: [1, 2, 3, 4, 5, 6, false] }],
@@ -51,28 +53,50 @@ const [pictureData,setPictureData] = useState(null)
     setPage(0);
   };
 
-const handleImageChange =(e)=>{
-  console.log(e);
-    let reader = new FileReader();
-    console.log(reader)
-    let file = e.target.files[0];
-     console.log("/////",file)
-     setPictureDisplay(file)
-    reader.onloadend = () => {
-       console.log("/////",reader.result)
-       setPictureData(reader.result)
-    };
-    reader.readAsDataURL(file);
-
-}
-  const handleFieldChange =(e)=>{
-// console.log(e.target.value);
-    const { name , value} = e.target
-setFormData((formData)=>({
-  ...formData,[name] : value
-}))
+  const handleDrag = (e)=>{
+e.preventDefault()
+    console.log("--------->",e);
 
   }
+  const handleDrop = (e)=>{
+    e.preventDefault()
+    console.log("===========>",e.dataTransfer.files);
+setFilesDandD(e.dataTransfer.files)
+  }
+console.log(filesDandD);
+  const  handleDandD =(e)=>{
+    console.log("dAND d=====>",e.target.files);
+    setFilesDandD(e.target.files)
+  }
+
+
+const handleDeleteDandD=(file,index)=>{
+  console.log(file);
+  setFilesDandD(filesDandD[index])
+
+
+}
+
+  const handleImageChange = (e) => {
+    console.log(e);
+    let reader = new FileReader();
+    console.log(reader);
+    let file = e.target.files[0];
+    console.log("/////", file);
+    setPictureDisplay(file);
+    reader.onloadend = () => {
+      setPictureData(reader.result);
+    };
+    reader.readAsDataURL(file);
+  };
+  const handleFieldChange = (e) => {
+    // console.log(e.target.value);
+    const { name, value } = e.target;
+    setFormData((formData) => ({
+      ...formData,
+      [name]: value,
+    }));
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -164,54 +188,44 @@ setFormData((formData)=>({
     },
   ];
 
+  const handleImageUpload = (e) => {
+    console.log(e.target.files);
+    const file = e.target.files;
+    let updatedSelectedImage = [];
 
-  const handleImageUpload = (e)=>{
-const file = e.target.files
-console.log(file);
-//     for(let i=0; i< file.length; i++){
-//       console.log(i,"12345",file[i]);
-//       // setMultipleImage(file[i])
-//       var  reader = new FileReader()
-//       console.log(reader);
-//       reader.onloadend = () => {
-//         console.log("/////",reader.result)
-//         console.log(file[i]);
-//      };
+    for (let i = 0; i < file.length; i++) {
+      console.log("==========>", file[i]);
+      // updatedSelectedImage = [...selectedMultipleImage, file[i]];
 
-//     }
-   const files = e.target.files;
-   const filesArray = [...files]
+      setSelectedMultipleImage((selectedMultipleImage) => [
+        ...selectedMultipleImage,
+        file[i],
+      ]);
 
-   const data = filesArray.map((data)=>{
-console.log(data);
-    return new Promise((resolve,reject)=>{
-      const reader = new FileReader()
-      reader.onloadend=(e)=>{
-        resolve(e.target.result)
-        setSelectedMultipleImage(e.target.result)
-console.log(e.target.result);
-        reader.onerror = (error) => {
-          reject(error);
-        };
+      let reader = new FileReader();
+      console.log(reader);
+      console.log("1234455555==>", selectedMultipleImage);
+      reader.onloadend = () => {
+        setImageConverted((imageConverted) => [
+          ...imageConverted,
+          reader.result,
+        ]);
+      };
+      reader.readAsDataURL(file[i]);
+    }
+  };
 
-        reader.readAsDataURL(data);
-      }
-    })
-   })
-Promise.all(data).then((imageConvertedData)=>{
-console.log("proise====>",imageConvertedData);
-  setSelectedMultipleImage([...selectedMultipleImage,...filesArray])
-setImageConverted([...imageConverted , imageConvertedData])
-}).catch((error)=>{
-  console.log("errror", error);
-})
+  const handleMultipleDelete = (data, index) => {
+    console.log("------------------>", imageConverted[index]);
 
-  }
-  console.log(selectedMultipleImage);
-
-//   const handleUpload=()=>{
-// console.log("qwerty",selectedMultipleImage, imageConverted);
-//   }
+    setImageConverted(
+      (imageConverted) => [...imageConverted],
+      imageConverted.pop(index)
+    );
+  };
+  //   const handleUpload=()=>{
+  // console.log("qwerty",selectedMultipleImage, imageConverted);
+  //   }
 
   return (
     <>
@@ -230,11 +244,9 @@ setImageConverted([...imageConverted , imageConvertedData])
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((data) => (
                 <TableRow>
-
                   <TableCell>{data.userId}</TableCell>
                   <TableCell>{data.title}</TableCell>
                   <TableCell>{data.body}</TableCell>
-
                 </TableRow>
               ))}
           </TableBody>
@@ -250,60 +262,121 @@ setImageConverted([...imageConverted , imageConvertedData])
         onRowsPerPageChange={handleChangeRowsPerPage}
       />
 
-      <Card className="card-form" sx={{ height: "auto", marginLeft: "100px",display:'flex',flexDirection :'column' }}>
-
-      <p>Title :</p>
-      <TextField 
-      className="txt-field-title"
-        onChange={handleFieldChange}
-        value={formData.title}
-        name="title"
+      <Card
+        className="card-form"
+        sx={{
+          height: "auto",
+          marginLeft: "100px",
+          display: "flex",
+          flexDirection: "column",
+        }}
+      >
+        <p>Title :</p>
+        <TextField
+          className="txt-field-title"
+          onChange={handleFieldChange}
+          value={formData.title}
+          name="title"
         />
 
-<input
-  accept="image/*"
-  id="image-upload"
-  type="file"
-  multiple
-  style={{ display: 'none' }}
-  onChange={handleImageChange}
-/>
-<label htmlFor="image-upload">
-
-            <Button  component='span' className='upload-pic-btn'>Upload Profile</Button>
-            </label>
-            {
-              pictureData && <Card>
-                 <CloseOutlinedIcon onClick={()=>setPictureData(null)}/>
-                <img src={pictureData}/></Card>
-            }
-
-
-
-<Card>
-        <p>Description :</p>
-        <ReactQuill
-          theme="snow"
-          value={value}
-          onChange={setValue}
-          modules={modules}
-          className="rich-text-div"
+        <input
+          accept="image/*"
+          id="image-upload"
+          type="file"
+          multiple
+          style={{ display: "none" }}
+          onChange={handleImageChange}
         />
-</Card>
-<input
-  accept="image/*"
-  id="image-upload-multiple"
-  type="file"
-  multiple
-  style={{ display: 'none',marginTop:'50px' }}
-   onChange={handleImageUpload}
-/>
-<label htmlFor="image-upload-multiple">
+        <label htmlFor="image-upload">
+          <Button component="span" className="upload-pic-btn">
+            Upload Profile
+          </Button>
+        </label>
+        {pictureData && (
+          <Card>
+            <CloseOutlinedIcon onClick={() => setPictureData(null)} />
+            <img src={pictureData} />
+          </Card>
+        )}
 
-            <Button  component='span' 
+        <Card>
+          <p>Description :</p>
+          <ReactQuill
+            theme="snow"
+            value={value}
+            onChange={setValue}
+            modules={modules}
+            className="rich-text-div"
+          />
+        </Card>
+        <input
+          accept="image/*"
+          id="image-upload-multiple"
+          type="file"
+          multiple
+          style={{ display: "none", marginTop: "50px" }}
+          onChange={handleImageUpload}
+        />
+        <label htmlFor="image-upload-multiple">
+          <Button
+            component="span"
             // onClick={handleUpload}
-            className='upload-pic-btn-multiple'>Upload Images</Button>
-            </label>
+            className="upload-pic-btn-multiple"
+          >
+            Upload Images
+          </Button>
+        </label>
+
+        {imageConverted &&
+          imageConverted.map((data, index) => (
+            <Card>
+              <CloseOutlinedIcon
+                onClick={() => handleMultipleDelete(data, index)}
+              />
+              <img src={data} />
+            </Card>
+          ))}
+
+<Card sx={{border:"2px dashed blue",marginTop:"10px", padding:"0px 10px 0px 10px"}} >
+  <div onDragOver={handleDrag}
+  onDrop={handleDrop}
+  >
+    <h1>Drag and Drop Your Files</h1>
+
+    <input
+       //  accept="image/*"
+          id="image-upload-dandd"
+          type="file"
+          multiple
+          style={{ display: "none" }}
+          onChange={handleDandD}
+          ref={inputRef}
+        />
+        <label htmlFor="image-upload-dandd">
+          <Button component="span" 
+          onClick={()=>inputRef.current.click()}
+          className="upload-pic-btn">
+            Select Files
+          </Button>
+        </label>
+    </div>
+    {
+      filesDandD && 
+        <div>
+          {
+            Array.from(filesDandD).map((file,index)=>(
+             <Card sx={{display :'flex',flexDirection:'row'}}>
+               <p key={index}>{file.name}</p>
+               <Button onClick={(e)=>handleDeleteDandD(file,index)}>Delete</Button>
+             </Card>
+            ))
+          }
+        </div>
+    }
+
+
+</Card>
+
 
         {/* <p dangerouslySetInnerHTML={{ __html: value }} /> */}
 
