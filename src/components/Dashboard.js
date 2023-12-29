@@ -11,6 +11,8 @@ import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import "./dashboard.css";
 import CloseOutlinedIcon from "@mui/icons-material/CloseOutlined";
+import useRazorpay from "react-razorpay";
+import { Map } from "@mui/icons-material";
 export function Dashboard() {
   const initialState = {
     title: "",
@@ -19,12 +21,14 @@ export function Dashboard() {
   };
 
 const inputRef = useRef();
+const [Razorpay] = useRazorpay();
 
   const [selectedMultipleImage, setSelectedMultipleImage] = useState([]);
   const [imageConverted, setImageConverted] = useState([]);
   const [formData, setFormData] = useState(initialState);
   const [page, setPage] = useState(0);
   const [value, setValue] = useState("");
+  const [amount, setAmount] = useState("");
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [pictureDisplay, setPictureDisplay] = useState(null);
   const [pictureData, setPictureData] = useState(null);
@@ -63,7 +67,6 @@ e.preventDefault()
     console.log("===========>",e.dataTransfer.files);
 setFilesDandD(e.dataTransfer.files)
   }
-console.log(filesDandD);
   const  handleDandD =(e)=>{
     console.log("dAND d=====>",e.target.files);
     setFilesDandD(e.target.files)
@@ -72,7 +75,9 @@ console.log(filesDandD);
 
 const handleDeleteDandD=(file,index)=>{
   console.log(file);
-  setFilesDandD(filesDandD[index])
+  // setFilesDandD((filesDandD )=>{
+  // (...filesDandD, filesDandD[index]= null)
+  // })
 
 
 }
@@ -102,10 +107,65 @@ const handleDeleteDandD=(file,index)=>{
     e.preventDefault();
     if (!value) {
       console.log("Validate working");
-    } else {
+    }
+    if(!amount){
+      console.log("!!!!!!!");
+    }
+    else {
       console.log("elsee coming");
     }
   };
+
+
+const handlePayment =()=>{
+
+  if(!amount){
+    alert("Please Enter Amount")
+  }
+  else{
+
+    var options = {
+      key :"rzp_test_DkO1U3SbM13Fbb",
+      key_secret :"clPcaazNriu7qxt5rOMhmNWe",
+      amount :amount * 100,
+      currency :"INR",
+      name :'Trail Task',
+      description :"Trail Payment",
+      handler :function (response ){
+        alert(response.razorpay_payment_id);
+      },
+      prefill :{
+        name:'Mohan',
+        email:'mohankumar.vv@skeintech.com',
+        contact :'9524244116'
+      },
+      notes : {
+        address : "RazorPay Limited"
+      },
+      theme: {
+        color : "black"
+      }
+
+
+
+    }
+    var pay = new Razorpay(options)
+
+
+    
+  pay.on("payment.failed", function (response) {
+    alert(response.error.code);
+    alert(response.error.description);
+    alert(response.error.source);
+    alert(response.error.step);
+    alert(response.error.reason);
+    alert(response.error.metadata.order_id);
+    alert(response.error.metadata.payment_id);
+  });
+    pay.open()
+  }
+}
+
   const data = [
     {
       userId: 1,
@@ -308,6 +368,8 @@ const handleDeleteDandD=(file,index)=>{
             modules={modules}
             className="rich-text-div"
           />
+                  <p dangerouslySetInnerHTML={{ __html: value }} />
+
         </Card>
         <input
           accept="image/*"
@@ -378,7 +440,23 @@ const handleDeleteDandD=(file,index)=>{
 </Card>
 
 
-        {/* <p dangerouslySetInnerHTML={{ __html: value }} /> */}
+<Card sx={{backgroundColor:'whitesmoke',height:"50px",marginTop:'20px',width:"auto"}}>
+<div>
+  <TextField
+  type="number"
+  onChange={(e)=>setAmount(e.target.value)}
+  value={amount}
+  />
+  <Button
+   onClick={handlePayment}
+  >
+    Click to Pay
+  </Button>
+</div>
+</Card>
+
+
+
 
         {/* <Button onClick={handleSubmit}>Submit</Button> */}
       </Card>

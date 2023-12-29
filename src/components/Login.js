@@ -13,6 +13,12 @@ import { DesktopDatePicker } from "@mui/x-date-pickers";
 import { useNavigate } from "react-router-dom";
 
 
+/**
+ * The function allowsOnlyNumeric prevents non-numeric characters from being entered in an input field.
+ * @param e - The parameter "e" is an event object that represents the event that triggered the
+ * function. In this case, it is likely an event object related to a key press event.
+ */
+
 
 export function allowsOnlyNumeric(e) {
   const re = /^[0-9\b]+$/;
@@ -24,6 +30,9 @@ export function allowsOnlyNumeric(e) {
 export function Login() {
 
 
+/* The `initialState` constant is defining an initial state for the form data. It is an object with two
+properties: `username` and `mobilenumber`, both initially set to an empty string. This initial state
+will be used in the `useState` hook to initialize the `formData` state variable. */
   const initialState = {
     username :'', 
     mobilenumber :'',
@@ -53,6 +62,12 @@ const navigate = useNavigate()
 
   }
 
+  /**
+   * The function `handleInputChange` logs the value of an input element and updates the form data with
+   * the trimmed value.
+   * @param e - The parameter `e` is an event object that is passed to the `handleInputChange`
+   * function. It represents the event that occurred, such as a change in the input field value.
+   */
   const handleInputChange =(e)=>{
     console.log(e.target.value);
     const  { name, value } = e.target;
@@ -64,6 +79,14 @@ const navigate = useNavigate()
 
   }
   
+/**
+ * The `handleChange` function takes an event object as a parameter, extracts the name and value
+ * properties from the event object, formats the selected date using Moment.js, and logs the formatted
+ * date to the console.
+ * @param e - The parameter `e` is an event object that is passed to the `handleChange` function. It
+ * likely contains information about the event that triggered the function, such as the target element
+ * and the value of the input field.
+ */
   const handleChange = (e) => {
 
     const  { name, value } = e.$d;
@@ -99,6 +122,13 @@ setDobDate(selected)
 
   };
 
+/**
+ * The handleSubmit function is used to handle form submission and perform validation checks on the
+ * form data.
+ * @param e - The parameter `e` is an event object that is passed to the `handleSubmit` function when
+ * it is called. It is typically used to prevent the default behavior of a form submission, in this
+ * case, preventing the page from refreshing when the form is submitted.
+ */
   const handleSubmit=(e)=>{
     e.preventDefault();
 console.log(formData);
@@ -154,6 +184,8 @@ setDobError("Requried")
             variant="outlined"
             label="Enter Your Name"
           />
+
+          
           {
             ! formData.username && formError.username ? <span className="span-error ">{formError.username}</span> :""
           }
