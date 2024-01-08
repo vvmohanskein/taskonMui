@@ -13,6 +13,7 @@ import "./dashboard.css";
 import CloseOutlinedIcon from "@mui/icons-material/CloseOutlined";
 import useRazorpay from "react-razorpay";
 import { Map } from "@mui/icons-material";
+import { useNavigate } from "react-router-dom";
 export function Dashboard() {
   const initialState = {
     title: "",
@@ -20,8 +21,9 @@ export function Dashboard() {
     description: "",
   };
 
-const inputRef = useRef();
-const [Razorpay] = useRazorpay();
+  const inputRef = useRef();
+  const [Razorpay] = useRazorpay();
+  const navigate = useNavigate();
 
   const [selectedMultipleImage, setSelectedMultipleImage] = useState([]);
   const [imageConverted, setImageConverted] = useState([]);
@@ -57,30 +59,26 @@ const [Razorpay] = useRazorpay();
     setPage(0);
   };
 
-  const handleDrag = (e)=>{
-e.preventDefault()
-    console.log("--------->",e);
+  const handleDrag = (e) => {
+    e.preventDefault();
+    console.log("--------->", e);
+  };
+  const handleDrop = (e) => {
+    e.preventDefault();
+    console.log("===========>", e.dataTransfer.files);
+    setFilesDandD(e.dataTransfer.files);
+  };
+  const handleDandD = (e) => {
+    console.log("dAND d=====>", e.target.files);
+    setFilesDandD(e.target.files);
+  };
 
-  }
-  const handleDrop = (e)=>{
-    e.preventDefault()
-    console.log("===========>",e.dataTransfer.files);
-setFilesDandD(e.dataTransfer.files)
-  }
-  const  handleDandD =(e)=>{
-    console.log("dAND d=====>",e.target.files);
-    setFilesDandD(e.target.files)
-  }
-
-
-const handleDeleteDandD=(file,index)=>{
-  console.log(file);
-  // setFilesDandD((filesDandD )=>{
-  // (...filesDandD, filesDandD[index]= null)
-  // })
-
-
-}
+  const handleDeleteDandD = (file, index) => {
+    console.log(file);
+    // setFilesDandD((filesDandD )=>{
+    // (...filesDandD, filesDandD[index]= null)
+    // })
+  };
 
   const handleImageChange = (e) => {
     console.log(e);
@@ -108,63 +106,53 @@ const handleDeleteDandD=(file,index)=>{
     if (!value) {
       console.log("Validate working");
     }
-    if(!amount){
+    if (!amount) {
       console.log("!!!!!!!");
-    }
-    else {
+    } else {
       console.log("elsee coming");
     }
   };
 
+  const handlePayment = () => {
+    if (!amount) {
+      alert("Please Enter Amount");
+    } else {
+      var options = {
+        key: "rzp_test_DkO1U3SbM13Fbb",
+        key_secret: "clPcaazNriu7qxt5rOMhmNWe",
+        amount: amount * 100,
+        currency: "INR",
+        name: "Trail Task",
+        description: "Trail Payment",
+        handler: function (response) {
+          alert(response.razorpay_payment_id);
+        },
+        prefill: {
+          name: "Mohan",
+          email: "mohankumar.vv@skeintech.com",
+          contact: "9524244116",
+        },
+        notes: {
+          address: "RazorPay Limited",
+        },
+        theme: {
+          color: "black",
+        },
+      };
+      var pay = new Razorpay(options);
 
-const handlePayment =()=>{
-
-  if(!amount){
-    alert("Please Enter Amount")
-  }
-  else{
-
-    var options = {
-      key :"rzp_test_DkO1U3SbM13Fbb",
-      key_secret :"clPcaazNriu7qxt5rOMhmNWe",
-      amount :amount * 100,
-      currency :"INR",
-      name :'Trail Task',
-      description :"Trail Payment",
-      handler :function (response ){
-        alert(response.razorpay_payment_id);
-      },
-      prefill :{
-        name:'Mohan',
-        email:'mohankumar.vv@skeintech.com',
-        contact :'9524244116'
-      },
-      notes : {
-        address : "RazorPay Limited"
-      },
-      theme: {
-        color : "black"
-      }
-
-
-
+      pay.on("payment.failed", function (response) {
+        alert(response.error.code);
+        alert(response.error.description);
+        alert(response.error.source);
+        alert(response.error.step);
+        alert(response.error.reason);
+        alert(response.error.metadata.order_id);
+        alert(response.error.metadata.payment_id);
+      });
+      pay.open();
     }
-    var pay = new Razorpay(options)
-
-
-    
-  pay.on("payment.failed", function (response) {
-    alert(response.error.code);
-    alert(response.error.description);
-    alert(response.error.source);
-    alert(response.error.step);
-    alert(response.error.reason);
-    alert(response.error.metadata.order_id);
-    alert(response.error.metadata.payment_id);
-  });
-    pay.open()
-  }
-}
+  };
 
   const data = [
     {
@@ -276,7 +264,7 @@ const handlePayment =()=>{
   };
 
   const handleMultipleDelete = (data, index) => {
-    console.log("------------------>", imageConverted[index]);
+    console.log("------------------>",data);
 
     setImageConverted(
       (imageConverted) => [...imageConverted],
@@ -289,6 +277,22 @@ const handlePayment =()=>{
 
   return (
     <>
+      <div>
+        <Button
+          sx={{
+            float: "right",
+            textTransform: "none",
+            color: "white",
+            backgroundColor: "blue",
+          }}
+          onClick={() => {
+            localStorage.removeItem("token");
+            navigate("/");
+          }}
+        >
+          Log Out
+        </Button>
+      </div>
       <TableContainer component={Paper}>
         <Table sx={{ minWidth: 700 }} aria-label="customized table">
           <TableHead>
@@ -368,8 +372,7 @@ const handlePayment =()=>{
             modules={modules}
             className="rich-text-div"
           />
-                  <p dangerouslySetInnerHTML={{ __html: value }} />
-
+          <p dangerouslySetInnerHTML={{ __html: value }} />
         </Card>
         <input
           accept="image/*"
@@ -395,70 +398,76 @@ const handlePayment =()=>{
               <CloseOutlinedIcon
                 onClick={() => handleMultipleDelete(data, index)}
               />
-              <img src={data} />
+              <img className="multiple-image-shown" src={data} />
             </Card>
           ))}
 
-<Card sx={{border:"2px dashed blue",marginTop:"10px", padding:"0px 10px 0px 10px"}} >
-  <div onDragOver={handleDrag}
-  onDrop={handleDrop}
-  >
-    <h1>Drag and Drop Your Files</h1>
+        <Card
+          sx={{
+            border: "2px dashed blue",
+            marginTop: "10px",
+            padding: "0px 10px 0px 10px",
+          }}
+        >
+          <div onDragOver={handleDrag} onDrop={handleDrop}>
+            <h1>Drag and Drop Your Files</h1>
 
-    <input
-       //  accept="image/*"
-          id="image-upload-dandd"
-          type="file"
-          multiple
-          style={{ display: "none" }}
-          onChange={handleDandD}
-          ref={inputRef}
-        />
-        <label htmlFor="image-upload-dandd">
-          <Button component="span" 
-          onClick={()=>inputRef.current.click()}
-          className="upload-pic-btn">
-            Select Files
-          </Button>
-        </label>
-    </div>
-    {
-      filesDandD && 
-        <div>
-          {
-            Array.from(filesDandD).map((file,index)=>(
-             <Card sx={{display :'flex',flexDirection:'row'}}>
-               <p key={index}>{file.name}</p>
-               <Button onClick={(e)=>handleDeleteDandD(file,index)}>Delete</Button>
-             </Card>
-            ))
-          }
-        </div>
-    }
+            <input
+              //  accept="image/*"
+              id="image-upload-dandd"
+              type="file"
+              multiple
+              style={{ display: "none" }}
+              onChange={handleDandD}
+              ref={inputRef}
+            />
+            <label htmlFor="image-upload-dandd">
+              <Button
+                component="span"
+                onClick={() => inputRef.current.click()}
+                className="upload-pic-btn"
+              >
+                Select Files
+              </Button>
+            </label>
+          </div>
+          {filesDandD && (
+            <div>
+              {Array.from(filesDandD).map((file, index) => (
+                <Card sx={{ display: "flex", flexDirection: "row" }}>
+                  <p key={index}>{file.name}</p>
+                  <Button onClick={(e) => handleDeleteDandD(file, index)}>
+                    Delete
+                  </Button>
+                </Card>  
+              ))}
+            </div>
+          )}
+        </Card>
 
-
-</Card>
-
-
-<Card sx={{backgroundColor:'whitesmoke',height:"50px",marginTop:'20px',width:"auto"}}>
-<div>
-  <TextField
-  type="number"
-  onChange={(e)=>setAmount(e.target.value)}
-  value={amount}
-  />
-  <Button
-   onClick={handlePayment}
-  >
-    Click to Pay
-  </Button>
-</div>
-</Card>
-
-
-
+        <Card
+          sx={{
+            backgroundColor: "whitesmoke",
+            height: "50px",
+            marginTop: "20px",
+            width: "auto",
+          }}
+        >
+          <div>
+            {/* <h1>Payment Integration</h1> */}
+            <TextField
+              type="number"
+              onChange={(e) => setAmount(e.target.value)}
+              value={amount}
+            />
+            <Button onClick={handlePayment}>Click to Pay</Button>
+          </div>
+        </Card>
 
         {/* <Button onClick={handleSubmit}>Submit</Button> */}
+
+
+
       </Card>
     </>
   );

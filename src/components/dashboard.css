@@ -37,3 +37,7 @@ input[type=number] {
   -moz-appearance: textfield;
   /* Firefox */
 }
+.multiple-image-shown{
+  height: 5rem;
+  width: 5rem;
+}

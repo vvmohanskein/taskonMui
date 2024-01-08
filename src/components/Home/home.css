@@ -1,0 +1,74 @@
+.main-content-div{
+    margin-left: 220px;
+    height: 100vh;
+    width: 100%;
+
+}
+.main-close-div{
+    height: 100vh;
+    margin-left: 220px;
+
+    width: auto;
+}
+
+.card-1{
+    height: 130px;
+    width: 230px;
+    background-image: linear-gradient(243deg, rgba(2,0,36,1) -50%, rgba(60,238,227,1) 23%, rgba(0,212,255,1) 100%) !important;
+    margin-left: 15px;
+    border-radius: 8px;
+    /* border: 1px solid black; */
+}
+.card-2{
+    height: 130px;
+    width: 230px;
+    background-image: linear-gradient(to right, #8b53f1, #2ebf91) !important;
+        margin-left: 20px;
+    border-radius: 8px;
+}
+.card-3{
+    height: 130px;
+    width: 230px;
+    background-image: linear-gradient(to right, #fffbd5, #f87d95) !important;
+    margin-left: 20px;
+    border-radius: 8px;
+    /* border: 1px solid black; */
+}
+.card-4{
+    height: 130px;
+    width: 230px;
+    background-image: linear-gradient(to right, #00b09b, #c0f16a) !important;
+        margin-left: 20px;
+    border-radius: 8px;
+    /* border: 1px solid black; */
+}
+.header-div{
+    display: flex;
+    flex-direction: row;
+    justify-content: end;
+width: 80rem;
+}
+.card-para{
+    margin-left: 10px;
+}
+.card-para-value{
+    float: right ;
+    margin-right: 40px;
+font-size: large;
+}
+.input-date{
+    margin: 10px 10px 5px 13px;
+
+}
+
+
+.accordion-open-control{
+    width: 82% !important;
+}
+.accordion-full-control{
+    width: 80% !important;
+ 
+}
+.css-i9fmh8-MuiBackdrop-root-MuiModal-backdrop{
+    position: relative !important;
+}
